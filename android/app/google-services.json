@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "178931388505",
+    "firebase_url": "https://instagram-clone-e865a.firebaseio.com",
+    "project_id": "instagram-clone-e865a",
+    "storage_bucket": "instagram-clone-e865a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:178931388505:android:d9cf53493d430206dde148",
+        "android_client_info": {
+          "package_name": "com.expenseapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "178931388505-ahos2b40gc4pf8hkpbe952dqbh99jqgn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAjLt1vE4G-__qeQdfD9Awx47e6-Y_fpk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "178931388505-ahos2b40gc4pf8hkpbe952dqbh99jqgn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
