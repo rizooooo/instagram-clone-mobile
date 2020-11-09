@@ -2,16 +2,16 @@ import React from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const HeaderHome = () => {
+const HeaderAlbum = () => {
     const { container, headerText } = styles;
     return (
        <View style={container}>
            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
            <Icon name="camera" size={20} color="#900" />
-           <Text style={headerText}>Instagram</Text>
+           <Text style={headerText}>Gallery</Text>
            </View>
           
-           <Icon name="send-o" size={20} color="#900" />
+           <Text>Next</Text>
        </View>
     )
 }
@@ -34,4 +34,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default HeaderHome
+export default HeaderAlbum

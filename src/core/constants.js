@@ -35,3 +35,36 @@ export const stories = [
         image: require('./../assets/images/darrell.jpg')
     }
 ]
+
+export const posts = [
+    {
+        id: 1,
+        username: 'darreeell',
+        avatar: require('./../assets/images/darrell.jpg'),
+        image: require('./../assets/images/fam.jpg'),
+    },
+    {
+        id: 2,
+        username: 'darreeell',
+        avatar: require('./../assets/images/darrell.jpg'),
+        image: require('./../assets/images/fam.jpg'),
+    },
+    {
+        id: 3,
+        username: 'darreeell',
+        avatar: require('./../assets/images/darrell.jpg'),
+        image: require('./../assets/images/fam.jpg'),
+    },
+    {
+        id: 4,
+        username: 'darreeell',
+        avatar: require('./../assets/images/darrell.jpg'),
+        image: require('./../assets/images/fam.jpg'),
+    },
+    {
+        id: 5,
+        username: 'darreeell',
+        avatar: require('./../assets/images/darrell.jpg'),
+        image: require('./../assets/images/fam.jpg'),
+    }
+]

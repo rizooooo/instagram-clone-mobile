@@ -17,7 +17,10 @@ import {
     TextInput,
     Button,
     FlatList,
-    Image
+    Image,
+    PermissionsAndroid, Platform,
+    Dimensions,
+    TouchableOpacity
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { NavigationContainer } from '@react-navigation/native';
@@ -28,10 +31,36 @@ import { FaBeer } from 'react-icons/fa';
 import Ionicons from 'react-native-vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import HeaderHome from './src/components/header';
-import { stories } from './src/core/constants';
+import HeaderAlbum from './src/components/header-album';
+import { stories, posts } from './src/core/constants';
+import Post from './src/components/post';
+
+import CameraRoll from "@react-native-community/cameraroll";
+
+import RNFS from 'react-native-fs';
+// var RNFS = require('react-native-fs');
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+async function hasAndroidPermission() {
+    const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+
+    const hasPermission = await PermissionsAndroid.check(permission);
+    if (hasPermission) {
+        return true;
+    }
+
+    const status = await PermissionsAndroid.request(permission);
+    return status === 'granted';
+}
+
+async function savePicture() {
+    if (Platform.OS === "android" && !(await hasAndroidPermission())) {
+        return;
+    }
+    CameraRoll.saveToCameraRoll(tag, [type]);
+};
 
 const App = () => {
 
@@ -57,7 +86,15 @@ const App = () => {
     function AlbumStackScreen() {
         return (
             <AlbumStack.Navigator>
-                <AlbumStack.Screen name="Home" component={AlbumsScreen} />
+                <AlbumStack.Screen
+                    name="Home"
+                    component={AlbumsScreen}
+                    options={{
+                        headerStyle: {
+                            height: 50
+                        },
+                        headerTitle: props => <HeaderAlbum {...props} />
+                    }} />
             </AlbumStack.Navigator>
         );
     }
@@ -130,25 +167,41 @@ const App = () => {
 
 const IgStories = ({ item }) => (
     <View style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 15 }}>
-        <Image style={{ borderRadius: 50 }}  source={item.image} />
+        <Image style={{ borderRadius: 50 }} source={item.image} />
         <Text>{item.name}</Text>
     </View>
 )
 
+const ListStoriesContainer = () => (
+    <View>
+        <FlatList
+            showsHorizontalScrollIndicator={false}
+            style={{
+                marginVertical: 0,
+                padding: 10,
+            }}
+            horizontal={true}
+            data={stories}
+            renderItem={({ item }) => <IgStories item={item} />}
+        />
+    </View>
+);
+
 function HomeScreen() {
     return (
-        <View style={{ display: 'flex', flexDirection: 'column' }}>
+        <View style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#fff', height: '100%' }}>
+
             {/* <Text>Home!</Text> */}
-            <FlatList
-                showsHorizontalScrollIndicator={false}
-                style={{
-                    marginVertical: 10,
-                    paddingLeft: 10
-                }}
-                horizontal={true}
-                data={stories}
-                renderItem={({ item }) => <IgStories item={item} />}
-            />
+
+            <View style={{ flex: 1 }}>
+
+                <FlatList
+                    ListHeaderComponent={ListStoriesContainer}
+                    data={posts}
+                    renderItem={({ item }) => <Post item={item} />}
+                />
+                {/* <Text>Images</Text> */}
+            </View>
         </View>
     );
 }
@@ -173,19 +226,62 @@ function LikeScreen() {
 
 function CameraScreen() {
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>CameraScreen!</Text>
-            <Icon name="rocket" size={25} color="#900" />
+        <View style={{ width: Dimensions.get('window').width, height: 300 }}>
+            <Image source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} style={{
+                flex: 1,
+                width: null,
+                height: null
+            }} />
         </View>
     );
 }
 
 function AlbumsScreen() {
+    const [photos, setPhotos] = useState([]);
+    const [photo, setPhoto] = useState(null);
+    useEffect(() => {
+        hasAndroidPermission();
+        CameraRoll.getPhotos({
+            first: 30,
+            assetType: 'Photos',
+        }).then(p => {
+            setPhotos(p.edges)
+            setPhoto(p.edges[0].node.image.uri)
+        })
+    }, [])
+
+    // <Image key={i} width={200} height={200} source={p.node.image.uri} />
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>AlbumsScreen!</Text>
-            <Icon name="rocket" size={25} color="#900" />
+        <View style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <View style={{ flex: 1.3 }}>
+                {photo && <Image style={{
+                    flex: 1,
+                    width: null,
+                    height: 100,
+                    resizeMode: 'cover'
+                }} source={{ uri: photo }} />}
+            </View>
+            <FlatList
+                style={{ flex: 1 }}
+                keyExtractor={(item, index) => index}
+                numColumns={4}
+                data={photos}
+                contentContainerStyle={{ justifyContent: 'flex-start', flexDirection: 'column' }}
+                renderItem={(item, i) => <View key={item.item.node.image.uri} style={{ flex: 1, flexDirection: 'column', margin: 1 }}>
+                    <TouchableOpacity onPress={() => setPhoto(item.item.node.image.uri)}>
+                        <Image style={{
+                            flex: 1,
+                            width: null,
+                            height: 100,
+                            resizeMode: 'cover'
+                        }} source={{ uri: item.item.node.image.uri }} />
+                    </TouchableOpacity>
+
+                </View>}
+            />
         </View>
+
+
     );
 }
 
